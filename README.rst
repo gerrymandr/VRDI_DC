@@ -3,8 +3,6 @@ discretecompactness
 ===============================
 
 
-.. image:: https://img.shields.io/travis/gerrymandr/DiscreteCompactness.svg
-        :target: https://travis-ci.org/gerrymandr/DiscreteCompactness
 .. image:: https://circleci.com/gh/gerrymandr/DiscreteCompactness.svg?style=svg
     :target: https://circleci.com/gh/gerrymandr/DiscreteCompactness
 .. image:: https://codecov.io/gh/gerrymandr/DiscreteCompactness/branch/master/graph/badge.svg
