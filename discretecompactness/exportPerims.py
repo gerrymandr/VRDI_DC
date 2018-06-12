@@ -9,7 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Importing a .shp file
-shp = "cb_2017_72_tract_500k.shp"
+shp = "cb_2017_72_tract_500k/cb_2017_72_tract_500k.shp"
 mapfile = gpd.read_file(shp)
 
 # Identify the centroids of the file
