@@ -9,6 +9,11 @@ Authored by Jordan Kemp for the VRDI
 June 13th, 2018
 
 """
+#Constants
+SRC_SHAPEFILE = "cb_2017_72_tract_500k/cb_2017_72_tract_500k.shp"
+SAVE_FILE = "pr_county.gal";
+SAVE_FILE_WITH_ID = "pr_county_geoid.gal";
+
 
 import os
 
@@ -82,19 +87,19 @@ def export_adjacencies(mapData):
 
     # With useful ID
     mapData.weights = ps.rook_from_shapefile(shp, idVariable = "GEOID10")
-    gal = ps.open("pr_county_geoid.gal", "w")
+    gal = ps.open(SAVE_FILE_WITH_ID, "w")
     gal.write(mapData.weights)
     gal.close()
 
 
     # Save Spatial Weights file in GAL format
-    gal = ps.open("pr_county.gal", "w")
+    gal = ps.open(SAVE_FILE, "w")
     gal.write(mapData.weights)
     gal.close()
 
 
 # Importing a .shp file
-shp = "cb_2017_72_tract_500k/cb_2017_72_tract_500k.shp"
+shp = SRC_SHAPEFILE
 mapfile = gpd.read_file(shp)
 
 mapData = get_adjacencies(mapfile)
