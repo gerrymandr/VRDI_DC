@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def get_adjacencies(mapfile):
+
     # Identify the centroids of the file
     map_centroids = mapfile.centroid
     c_x = map_centroids.x
@@ -60,3 +61,5 @@ mapfile = gpd.read_file(shp)
 rW = get_adjacencies(mapfile)
 # show_map(rw)
 export_adjacenccies(rW)
+
+print(rW)
