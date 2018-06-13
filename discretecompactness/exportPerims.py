@@ -8,8 +8,11 @@ import numpy as np
 # visualization
 import matplotlib.pyplot as plt
 
-def get_adjacencies(mapfile):
+SOURCE_SHAPEFILE = "cb_2017_72_tract_500k/cb_2017_72_tract_500k.shp"
+SAVE_FILE = "pr_county.gal";
+SAVE_FILE_WITH_ID = "pr_county_geoid.gal";
 
+def get_adjacencies(mapfile):
     # Identify the centroids of the file
     map_centroids = mapfile.centroid
     c_x = map_centroids.x
@@ -44,22 +47,20 @@ def export_adjacenccies(rW):
 
     # With useful ID
     rW = ps.rook_from_shapefile(shp, idVariable = "GEOID")
-    gal = ps.open("pr_county_geoid.gal", "w")
+    gal = ps.open(SAVE_FILE, "w")
     gal.write(rW)
     gal.close()
 
 
     # Save Spatial Weights file in GAL format
-    gal = ps.open("pr_county.gal", "w")
+    gal = ps.open(SAVE_FILE_WITH_ID, "w")
     gal.write(rW)
     gal.close()
 
 # Importing a .shp file
-shp = "cb_2017_72_tract_500k/cb_2017_72_tract_500k.shp"
+shp = SOURCE_SHAPEFILE;
 mapfile = gpd.read_file(shp)
 
 rW = get_adjacencies(mapfile)
 # show_map(rw)
 export_adjacenccies(rW)
-
-print(rW)
