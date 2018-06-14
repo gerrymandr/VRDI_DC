@@ -11,12 +11,6 @@ Example function calls:
 """
 import geopandas as gpd
 import numpy as np
-import os
-
-from urllib.request import urlopen
-from zipfile import ZipFile
-
-
    
 # Functions for calculating discrete area and perimeter
  

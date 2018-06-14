@@ -3,6 +3,10 @@
 Docstring
 """
 
+import os
+from urllib.request import urlopen
+from zipfile import ZipFile
+
 # Data retrieval
 def get_and_unzip(url, data_dir=os.getcwd()):
     basename = url.split("/")[-1]
@@ -17,6 +21,7 @@ def get_and_unzip(url, data_dir=os.getcwd()):
         zip_obj.extractall(data_dir)
         del(zip_obj)
 
+"""
 # State FIPS codes - specify here your state of interest
 FIPS = ["01"]       # Alabama
 
@@ -37,11 +42,12 @@ if not os.path.exists(os.path.join(os.getcwd(), 'CD_SHP')):
     os.makedirs(os.path.join(os.getcwd(),'CD_SHP'))
     
 # Grab 113th congressional district TIGER shapefile from census
+
 url_cd = "https://www2.census.gov/geo/tiger/TIGERrd13/CD113/tl_rd13_us_cd113.zip"
 get_and_unzip(url_cd, "CD_SHP")
     
-
 # Create the data frames and query out state of interest
 df_vtds = gpd.read_file("VTD_SHP")
 df_cds = gpd.read_file("CD_SHP")
 df_statecds = df_cds.loc[df_cds['STATEFP'] == state_fip]
+"""
