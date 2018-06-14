@@ -8,6 +8,7 @@ components of compactness measures, in Euclidean space. Recommended usage
 
 import geopandas as gpd
 from math import pi
+from smallest_enclosing_circle import make_circle
 
 def _discrete_perimeter(geo, geo_cell):
     """Not implemented"""
@@ -124,4 +125,13 @@ def c_hull_ratio(geo):
     return area(geo) / area(geo, convex_hull = True)
 
 def reock(geo):
+    """
+    Returns Reock (1961) compactness of geo as float
     
+    Keyword arguments:
+        geo -- GeoSeries or GeoDataFrame
+    """
+    
+    mbc_area = geo.convex_hull.apply(lambda x: pi * make_circle(list(x.exterior.coords))[2] ** 2)
+    return geo.area / mbc_area
+
