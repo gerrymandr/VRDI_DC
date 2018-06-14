@@ -59,7 +59,7 @@ def perimeter(geo, geo_cell = None):
         # Continuous perimeter
         return _continuous_perimeter(geo)
     else:
-        return _discrete_perimeter(geo)
+        return _discrete_perimeter(geo, geo_cell)
 
 def area(geo, geo_cell = None, convex_hull = False):
     """
