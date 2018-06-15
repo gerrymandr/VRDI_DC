@@ -3,13 +3,13 @@ exportPerims.py
 This script detects the boundaries of units in a .shp file. The algorithm builds
 a matrix containing all faces of the dual graph, then determines which graph edges
 of those faces are unpaired, indicating they bound the graph.
-Authored by Jordan Kemp for the VRDI
+Authored by Jordan Kemp and Eugene HV for the VRDI
 June 13th, 2018
 """
 #Constants
 SRC_SHAPEFILE = "Data/cb_2017_72_tract_500k.shp"
-SAVE_FILE = "pr_county.gal";
-SAVE_FILE_WITH_ID = "pr_county_geoid.gal";
+SAVE_FILE = "pr_county.gal"
+SAVE_FILE_WITH_ID = "pr_county_geoid.gal"
 
 import os
 
@@ -61,19 +61,42 @@ class MapData:
 
     def find_boundaries(self):
 
-        def compute_angles():
-            return
-
         def build_face_matrix():
             return
 
-        def find_next_fvertex():
-            return
+        def next_vertex(current,edge_list):
 
-        for x, col in self.centroids:
-            for y,centroid in col:
-                for key,edge in centroids.edges:
-                    return
+            if current not in edge_list:
+                if not current.traversed:
+                    edge_list.append(current)
+                    return next_vertex(current.next,edge_list)
+
+                else:
+                    return False
+
+            else:
+                return current
+
+
+        for x, col in self.centroids.items():
+            for y,centroid in col.items():
+
+                for edge in self.edges[centroid]:
+                    if not edge.traversed:
+
+                        edge_list = [edge]
+                        result = next_vertex(edge.next,edge_list)
+
+                        if not result:
+                            continue
+
+                        else:
+                            edge_list = edge_list[edge_list.index(result):]
+
+                            for edge in edge_list:
+                                edge.traversed = True
+
+                            self.face_list.append(edge_list)
 
     def generate_edges(self,c_x,c_y):
 
@@ -99,9 +122,12 @@ class MapData:
 
                 angle = np.math.atan2(np.linalg.det([v0,v1]),np.dot(v0,v1))
                 angles.append(np.degrees(angle))
+            for i in range(len(angles)):
+                if angles[i]<=0:
+                    angles[i] += 360
 
             angles, adjs = zip(*sorted(zip(angles, adjs)))
-
+            edge.adj_angles = angles
             return adjs[0]
 
 
@@ -109,12 +135,42 @@ class MapData:
         for v1,edges in pairs.items():
             for edge in edges:
                 edge.next = calc_small_angle(edge,pairs[edge.v2])
+                edge.adjs = pairs[edge.v2]
 
         return pairs
 
+    def print_face_list(self):
+        # basemap = mapfile.plot(color = "white", edgecolor = "lightgray")
+        # self.c.plot(ax = basemap, markersize = 1)
+        #
+        #
+        # # for lst in self.face_list:
+        # #     print(len(lst))
+        # #     for edge in lst:
+        # #
+        # #         if edge.traversed:
+        # #             print(edge.v1.x,edge.v1.y,edge.v2.x,edge.v2.y)
+        # #             basemap.plot([edge.v1.x,edge.v2.x],[edge.v1.y,edge.v2.y], color="blue")
+        # #     print("\n")
+        # for lst in self.face_list:
+        #     if len(lst) ==8:
+        #         for edge in lst:
+        #             basemap.plot([edge.v1.x,edge.v2.x],[edge.v1.y,edge.v2.y], color="red")
+
+        # plt.show()
+
+        for key,edge in self.edges.items():
+            for e in edge:
+                if not e.traversed:
+                    print(e.v1,e.v2)
 
     # Spatial weights, centroids, and edges
-    def __init__(self,weights,c_x,c_y):
+    def __init__(self,weights,centroids):
+
+        self.c = centroids
+
+        c_x=centroids.x
+        c_y = centroids.y
 
         #Save the weights
         self.weights = weights
@@ -124,7 +180,10 @@ class MapData:
         #Save the edges to be used as keys in the
         self.edges = self.generate_edges(c_x,c_y)
         #Generate edge/face dict.
-        self.face_dict = {edge:None for edge,adjs in self.edges.items()}
+        self.face_list = []
+
+
+
 
 
 # Parses the map data to produce centroids, and the spatial weights. Packages them
@@ -133,13 +192,11 @@ def get_adjacencies(mapfile):
 
     # Identify the centroids of the file
     map_centroids = mapfile.centroid
-    c_x = map_centroids.x
-    c_y = map_centroids.y
 
     # Spatial Weights
     rW = ps.rook_from_shapefile(shp)
 
-    return MapData(rW,c_x,c_y)
+    return MapData(rW,map_centroids)
 
 # Prints adjacency map/graph
 def show_map(rW):
@@ -173,5 +230,9 @@ shp = SRC_SHAPEFILE
 mapfile = gpd.read_file(shp)
 
 mapData = get_adjacencies(mapfile)
+
+mapData.find_boundaries()
+
+mapData.print_face_list()
 # export_adjacencies(mapData)
 # print(mapData.edges)
