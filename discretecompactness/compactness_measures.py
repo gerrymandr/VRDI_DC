@@ -41,7 +41,7 @@ def perimeter(geo, geo_cell = None):
         
     This function calculates continuous or discrete perimeter. 
     
-    Continous (Euclidean) perimeter is calculated if only geo argument is 
+    Continuous (Euclidean) perimeter is calculated if only geo argument is 
     provided. Currently this function just returns GeoSeries.length. 
     Future improvements could include:
         
@@ -73,7 +73,7 @@ def area(geo, geo_cell = None, convex_hull = False):
         
     This function calculates continuous or area. 
     
-    Continous (Euclidean) area is calculated if only geo argument is 
+    Continuous (Euclidean) area is calculated if only geo argument is 
     provided. Currently this function just returns GeoSeries.area. 
     Future improvements could include:
         
