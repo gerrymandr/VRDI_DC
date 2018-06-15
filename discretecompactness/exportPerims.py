@@ -7,7 +7,7 @@ Authored by Jordan Kemp and Eugene HV for the VRDI
 June 13th, 2018
 """
 #Constants
-SRC_SHAPEFILE = "Data/cb_2017_72_tract_500k.shp"
+SRC_SHAPEFILE = "Data/cb_2017_72_sldu_500k.shp"
 SAVE_FILE = "pr_county.gal"
 SAVE_FILE_WITH_ID = "pr_county_geoid.gal"
 
@@ -17,6 +17,7 @@ import os
 import geopandas as gpd
 import pysal as ps
 import numpy as np
+
 
 # visualization tools
 import matplotlib.pyplot as plt
@@ -59,17 +60,27 @@ class MapData:
     # Get_edges takes a list of centroids and produces a list of edges in the form
     # of a (x1,y1),(x2,y2)) vertex pair list
 
+    #Finds the faces/boundaries of a graph
     def find_boundaries(self):
 
+        #Stub
         def build_face_matrix():
             return
 
+        #Recursively adds the next vertex. If there is no next vertex that isn't
+        # traversed, returns False to kill this branch of the search. Once it closes
+        # a loop, it returns the closing edge
         def next_vertex(current,edge_list):
 
             if current not in edge_list:
                 if not current.traversed:
                     edge_list.append(current)
-                    return next_vertex(current.next,edge_list)
+                    result= next_vertex(current.next,edge_list)
+                    if not result:
+                        edge_list.pop()
+                        return False
+                    else:
+                        return result
 
                 else:
                     return False
@@ -78,12 +89,14 @@ class MapData:
                 return current
 
 
+        #Loops through every untraversed edge of every half edge, building a list.
         for x, col in self.centroids.items():
             for y,centroid in col.items():
 
                 for edge in self.edges[centroid]:
                     if not edge.traversed:
 
+                        #Begins recursion, building the array
                         edge_list = [edge]
                         result = next_vertex(edge.next,edge_list)
 
@@ -140,29 +153,27 @@ class MapData:
         return pairs
 
     def print_face_list(self):
-        # basemap = mapfile.plot(color = "white", edgecolor = "lightgray")
-        # self.c.plot(ax = basemap, markersize = 1)
-        #
-        #
-        # # for lst in self.face_list:
-        # #     print(len(lst))
-        # #     for edge in lst:
-        # #
-        # #         if edge.traversed:
-        # #             print(edge.v1.x,edge.v1.y,edge.v2.x,edge.v2.y)
-        # #             basemap.plot([edge.v1.x,edge.v2.x],[edge.v1.y,edge.v2.y], color="blue")
-        # #     print("\n")
-        # for lst in self.face_list:
-        #     if len(lst) ==8:
-        #         for edge in lst:
-        #             basemap.plot([edge.v1.x,edge.v2.x],[edge.v1.y,edge.v2.y], color="red")
+        basemap = mapfile.plot(color = "white", edgecolor = "gray")
 
-        # plt.show()
+        self.face_list.sort(key=len)
+        for lst in self.face_list:
+            print(len(lst))
+            for edge in lst:
 
-        for key,edge in self.edges.items():
-            for e in edge:
-                if not e.traversed:
-                    print(e.v1,e.v2)
+                if lst == self.face_list[-1]:
+                    clr = "red"
+                else:
+                    clr = "blue"
+                if edge.traversed:
+                    basemap.plot([edge.v1.x,edge.v2.x],[edge.v1.y,edge.v2.y], color=clr,alpha=.5,linewidth=.5)
+        for lst in self.face_list:
+            if len(lst)==135:
+                for edge in lst:
+                    basemap.plot([edge.v1.x,edge.v2.x],[edge.v1.y,edge.v2.y], color="red")
+
+        plt.show()
+
+
 
     # Spatial weights, centroids, and edges
     def __init__(self,weights,centroids):
