@@ -1,6 +1,23 @@
 """
 hedge_creater.py
 
+Eugene Henninger-Voss 2018
+For MGGG
+
+Unique to this file:
+    Vertex class
+    make_vertices()
+    next_vertex()
+    make_face()
+    make_faces()
+    
+Creates the data needed for a halfedge graph from a shapefile.
+
+Given a shapefile these four functions work together to create a list of 
+Vertex class objects representing every vertex which stores each vertex's 
+coordinates and a list of adjecent vertices in a cyclic order.  A list of lists
+is also created in which each interior list is an ordered list of vertices 
+representing a face.
 
 
 """
@@ -58,13 +75,14 @@ class Vertex:
         self.x = x
         self.y = y
         self.adjs = []
+        self.transversed = []
 
 # alot like get_adjacencies
 # returns list of all the vertices with coordinates and ordered list of 
 # adjacencies from mapfile
 def make_vertices(mapfile):
     
-        # Identify the centroids of the file
+    # Identify the centroids of the file
     map_centroids = mapfile.centroid
     c_x = map_centroids.x
     c_y = map_centroids.y
@@ -75,7 +93,7 @@ def make_vertices(mapfile):
     
      #create place to store vertices
     vertices = []
-    for i in range(len(mapData.centroids)):
+    for i in range(len(map_centroids)):
         newVertex = Vertex(c_x[i], c_y[i])
         vertices.append(newVertex)
 
@@ -104,7 +122,7 @@ def make_vertices(mapfile):
             tempList.append(testList[j][0])
         currVert.adjs = tempList
         
-        return vertices
+    return vertices
     
 def next_vertex(v1, v2):
     oldIndex = v2.adjs.index(v1)
@@ -116,12 +134,43 @@ def next_vertex(v1, v2):
 def make_face(v1, v2):
     newFace = [v1, v2]
     
+    fromVertex = v1
+    currVertex = v2
     while True:
         
-    v2.adjs.index(v1) + 1
+        # mark that the current edge (vertex pair) has been transversed
+        fromVertex.transversed.append(currVertex)
+        
+        # find the next vertex
+        nextVertex = next_vertex(fromVertex, currVertex)
+        
+        # continue if not back where the face started
+        if nextVertex == v1 :
+            if v2 == next_vertex(currVertex, v1):
+                break
+            
+        # update face and the vertex variables 
+        newFace.append(nextVertex)
+        fromVertex = currVertex
+        currVertex = nextVertex
+        
+    return newFace
     
     
 def make_faces(vertices):
+    
+    faces = []
+    
+    # for every edge (vertex ordered pair) that has not been counted towards a 
+    # face yet start make_face on that edge
+    for v1 in vertices:
+        for v2 in v1.adjs:
+            if not v2 in v1.transversed:
+                faces.append(make_face(v1, v2))
+    
+    return faces
+                
+                
     
 
 # Parses the map data to produce centroids, and the spatial weights. Packages them
@@ -176,17 +225,10 @@ shp = SRC_SHAPEFILE
 mapfile = gpd.read_file(shp)
 
 vertices = make_vertices(mapfile)
+faces = make_faces(vertices)
 
 mapData = get_adjacencies(mapfile)
 export_adjacencies(mapData)
 # print(mapData.edges)
 
 
-
-
-ray = []
-for i in range(0,10):
-    x = i
-    ray.append([x])
-
-# need adjacencies
