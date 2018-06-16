@@ -8,7 +8,7 @@ components of compactness measures, in Euclidean space. Recommended usage
 
 import geopandas as gpd
 from math import pi
-from smallest_enclosing_circle import make_circle
+from discretecompactness.smallest_enclosing_circle import make_circle
 
 def _discrete_perimeter(geo, geo_cell):
     """Not implemented"""
