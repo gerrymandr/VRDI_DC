@@ -8,7 +8,7 @@ from urllib.request import urlopen
 from zipfile import ZipFile
 
 # Data retrieval
-def get_and_unzip(url, data_dir=os.getcwd()):
+def get_and_unzip(url, data_dir="."):
     basename = url.split("/")[-1]
     name_with_path = os.path.join(data_dir, basename)
     if not os.path.exists(name_with_path):
