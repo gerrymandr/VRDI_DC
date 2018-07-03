@@ -7,7 +7,7 @@ Authored by Jordan Kemp and Eugene HV for the VRDI
 June 13th, 2018
 """
 #Constants
-SRC_SHAPEFILE = "Data/cb_2017_72_sldu_500k.shp"
+SRC_SHAPEFILE = "Data/cb_2017_72_tract_500k.shp"
 SAVE_FILE = "pr_county.gal"
 SAVE_FILE_WITH_ID = "pr_county_geoid.gal"
 
@@ -157,7 +157,6 @@ class MapData:
 
         self.face_list.sort(key=len)
         for lst in self.face_list:
-            print(len(lst))
             for edge in lst:
 
                 if lst == self.face_list[-1]:
