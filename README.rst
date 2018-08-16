@@ -11,4 +11,4 @@ discretecompactness
    :target: https://www.codacy.com/app/msarahan/DiscreteCompactness?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=gerrymandr/DiscreteCompactness&amp;utm_campaign=Badge_Grade
 
 
-Discrete compactness measures of districting plans
+This repo contains two main subdirectories. They are Generalities, which contains algorithms and compactness measures, and DistrictData, which contains the associated data. 
