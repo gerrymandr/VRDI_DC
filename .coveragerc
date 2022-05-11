@@ -1,7 +1,0 @@
-[report]
-omit =
-    setup.py
-    discretecompactness/__main__.py
-    discretecompactness/_version.py
-    versioneer.py
-    tests/*
